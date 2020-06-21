@@ -1,0 +1,94 @@
+---
+title: "ASSIGNMENT 4"
+author: "Sara Herbstreit"
+date: '2020-06-20'
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+  fig_caption: yes
+bibliography: bibliography.bib
+---
+
+# Markdown Basics
+## Favorite Foods
+
+1. Filet Mignon
+2. Primavera
+3. BBQ Ribs
+
+## Images
+![All Cases (Log Plot)](/Users/saraherbstreit/Documents/GitHub DSC Projects/DSC_Bellevue_Sherbstreit/completed/assignment04/plots/10-all-cases-log.png)
+
+
+## Add a Quote
+> *Don't allow anyone to treat you like a yellow Starburst. You are a pink Starburst.* (Author unknown)
+
+## Add an Equation
+$$\sqrt{2^2 - 8}$$
+## Add a Footnote
+
+^[This is a footnote]
+
+## Add Citations
+
+* *R for Everyone (2nd Ed)*, [@book{10.5555/3161376]]
+* *Discovering Statistics Using R*, [@lander2014r]
+
+# Inline Code
+```{r load_inline, include=FALSE}
+library("markdown")
+library("ggplot2")
+setwd("/users/saraherbstreit/Documents/GitHub DSC Projects/DSC_Bellevue_Sherbstreit")
+heights_df <- read.csv("data/r4ds/heights.csv")
+covid_df <- read.csv("data/nytimes/covid-19-data/us-states.csv")
+covid_df$date <- as.Date(covid_df$date)
+california_df <- covid_df[ which( covid_df$state == "California"), ]
+ny_df <- covid_df[ which( covid_df$state == "New York"), ]
+florida_df <- covid_df[ which( covid_df$state == "Florida"), ]
+
+```
+## NY Times COVID-19 Data
+```{r covid_graph, echo=FALSE}
+ggplot(data= florida_df, aes(x= date, group=1)) +
+    geom_line(aes(y = cases, colour = "Florida")) +
+    geom_line(data=ny_df, aes(y = cases,colour="New York")) +
+    geom_line(data=california_df, aes(y = cases, colour="California")) +
+    scale_colour_manual("",
+                        breaks = c('Florida', 'New York', 'California'),
+                        values = c('red', 'green', 'blue')) +
+    xlab(" ") + ylab("Cases") + scale_y_log10()
+```
+## R4DS Height vs Earnings
+```{r height_earn_graph, echo=FALSE}
+ggplot(heights_df, aes(x=height, y=earn, col=sex)) + geom_point() + ggtitle('Height vs. Earnings') +
+xlab("Height (Inches)") + ylab("Earnings (Dollars)")
+```
+# Tables
+## Knitr Table with Kable
+``` {r lotr_graph, echo=FALSE}
+name <- c("Aragon", "Bilbo", "Frodo", "Galadriel", "Sam", "Gandalf", "Legolas", "Sauron", "Gollum")
+race <- c("Men", "Hobbit", "Hobbit", "Elf", "Hobbit", "Maia", "Elf", "Maia", "Hobbit")
+in_fellowship <- c(TRUE, FALSE, TRUE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE)
+ring_bearer <- c(FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE)
+age <- c(88, 129, 51, 7000, 36, 2019, 2931, 7052, 589)
+
+characters_df <- data.frame(name, race, in_fellowship, ring_bearer, age)
+
+knitr::kable(characters_df, caption = "One Ring to Rule Them All")
+```
+
+## Pandoc Table
+
+``` {r lotr_pandoc, echo=FALSE}
+library(tinytex)
+library(pander)
+pandoc.table(characters_df, style = 'grid')
+```
+
+
+# References
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
